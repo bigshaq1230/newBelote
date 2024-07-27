@@ -1,23 +1,50 @@
 <script setup>
-import { RouterLink, RouterView } from 'vue-router'
-import HelloWorld from './components/HelloWorld.vue'
+import { onMounted, ref } from 'vue'
+import { RouterLink,RouterView } from 'vue-router'
+import { supabase } from './supabase/supabase'
+import { useData } from './stores/data'
+import { storeToRefs } from 'pinia'
+const store = useData()
+const { session,players } = storeToRefs(store)
+
+
+async function getplayers() {
+  const { error , data } = await supabase.from('player').select()
+  if (error) {
+    console.error(error)
+  }
+  players.value = data
+  console.log("players from server",data)
+}
+
+onMounted(async() => {
+  await supabase.auth.getSession().then(({ data }) => {
+    session.value = data.session
+  
+  })
+  supabase.auth.onAuthStateChange((_, _session) => {
+    session.value = _session
+    
+  })
+  console.log(session.value)
+  if(session.value) {
+    // here will be also sync the changes made offline
+    await getplayers()
+  }
+
+})
+
 </script>
 
 <template>
-  <header>
-    <img alt="Vue logo" class="logo" src="@/assets/logo.svg" width="125" height="125" />
-
-    <div class="wrapper">
-      <HelloWorld msg="You did it!" />
-
-      <nav>
-        <RouterLink to="/">Home</RouterLink>
-        <RouterLink to="/about">About</RouterLink>
-      </nav>
-    </div>
-  </header>
-
+  <ul>
+    <li v-if="session"><RouterLink to="/account">Account</RouterLink></li>
+    <li v-else><RouterLink to="/auth">Authenticate</RouterLink></li>
+    <li><RouterLink to="/">New Match</RouterLink></li>
+  </ul>
   <RouterView />
+  <button @click="supabase.auth.signOut()">Sign Out!</button>
+
 </template>
 
 <style scoped>
