@@ -1,11 +1,11 @@
 <script setup>
-import { onMounted, ref } from 'vue'
+import { onMounted, ref, watch } from 'vue'
 import { RouterLink,RouterView } from 'vue-router'
 import { supabase } from './supabase/supabase'
 import { useData } from './stores/data'
 import { storeToRefs } from 'pinia'
 const store = useData()
-const { session,players } = storeToRefs(store)
+const { session,players,player,changes,matches } = storeToRefs(store)
 
 
 async function getplayers() {
@@ -20,11 +20,11 @@ async function getplayers() {
 onMounted(async() => {
   await supabase.auth.getSession().then(({ data }) => {
     session.value = data.session
-  
+
   })
   supabase.auth.onAuthStateChange((_, _session) => {
     session.value = _session
-    
+
   })
   console.log(session.value)
   if(session.value) {
@@ -33,13 +33,26 @@ onMounted(async() => {
   }
 
 })
+watch (player,()=> {
+  localStorage.setItem('player',player.value)
+},{deep:true})
 
+watch (changes,()=> {
+  localStorage.setItem('changes',changes.value)
+},{deep:true})
+watch (matches,()=> {
+  localStorage.setItem('matches',matches.value)
+},{deep:true})
+const index = players.value.findIndex( (l) => l?.user_id == player.value?.user_id)
+if (index === -1) {
+  players.value.push(player.value)
+}
 </script>
 
 <template>
   <ul>
-    <li v-if="session"><RouterLink to="/account">Account</RouterLink></li>
-    <li v-else><RouterLink to="/auth">Authenticate</RouterLink></li>
+    <li ><RouterLink to="/account">Account</RouterLink></li>
+    <li v-if="!session"><RouterLink to="/auth">Authenticate</RouterLink></li>
     <li><RouterLink to="/">New Match</RouterLink></li>
   </ul>
   <RouterView />
