@@ -1,23 +1,59 @@
 <script setup>
 import { onMounted, ref, watch } from 'vue'
-import { RouterLink,RouterView } from 'vue-router'
+import { RouterLink, RouterView } from 'vue-router'
 import { supabase } from './supabase/supabase'
 import { useData } from './stores/data'
 import { storeToRefs } from 'pinia'
+import { handleError, resolve_avatar_url } from './func'
 const store = useData()
-const { session,players,player,changes,matches } = storeToRefs(store)
+const { session, players, player, changes, matches } = storeToRefs(store)
 
 
-async function getplayers() {
-  const { error , data } = await supabase.from('player').select()
-  if (error) {
-    console.error(error)
+async function syncProperty(obj) {
+  const { edited, removed, table } = obj
+  if (edited.length > 0) {
+    edited.forEach(async (element) => {
+      const { errro } = await supabase.from(table).upsert(element)
+      if (errro) {
+        console.error(errro)
+      }
+    });
   }
-  players.value = data
-  console.log("players from server",data)
+  if (removed.length > 0) {
+    const { error } = await supabase.from(table).delete().in('id', removed)
+    handleError(error)
+  }
+}
+async function syncPlayer() {
+  if (Object.keys(changes.value.player).length <= 0) {
+    return
+  }
+  player.value.user_id = session.value.user.id
+  const { error } = await supabase.from('player').upsert(player.value)
+  handleError(error)
+
 }
 
-onMounted(async() => {
+async function getplayers() {
+  const { error, data } = await supabase.from('player').select()
+  handleError(error)
+  players.value = data
+  console.log("players from server", data)
+
+}
+
+function ResolveOwnPlayer() {
+  if (session.value) {
+    const index = players.value.findIndex((l) => l.user_id === session.value.user.id)
+    player.value = players.value[index]
+  }
+  else {
+    const index = players.value.findIndex( (l) => l.user_id === -1)
+    player.value = players.value[index]
+  }
+}
+
+onMounted(async () => {
   await supabase.auth.getSession().then(({ data }) => {
     session.value = data.session
 
@@ -26,36 +62,54 @@ onMounted(async() => {
     session.value = _session
 
   })
-  console.log(session.value)
-  if(session.value) {
-    // here will be also sync the changes made offline
-    await getplayers()
+  if (session.value) {
+    try {
+
+      const { matches } = changes.value
+
+      await syncProperty(matches)
+      await syncPlayer()
+
+
+      await getplayers()
+      await resolve_avatar_url(players)
+    }
+    catch (error) { handleError(error) }
+    finally {
+      localStorage.removeItem('changes')
+    }
   }
+  ResolveOwnPlayer()
 
 })
-watch (player,()=> {
-  localStorage.setItem('player',player.value)
-},{deep:true})
+watch(player, () => {
+  localStorage.setItem('player', JSON.stringify(player.value))
+}, { deep: true })
 
-watch (changes,()=> {
-  localStorage.setItem('changes',changes.value)
-},{deep:true})
-watch (matches,()=> {
-  localStorage.setItem('matches',matches.value)
-},{deep:true})
-const index = players.value.findIndex( (l) => l?.user_id == player.value?.user_id)
-if (index === -1) {
-  players.value.push(player.value)
-}
+watch(changes, () => {
+  localStorage.setItem('changes', JSON.stringify(changes.value))
+}, { deep: true })
+
+watch(matches, () => {
+  localStorage.setItem('matches', JSON.stringify(matches.value))
+}, { deep: true })
+
+
 </script>
 
 <template>
   <ul>
-    <li ><RouterLink to="/account">Account</RouterLink></li>
-    <li v-if="!session"><RouterLink to="/auth">Authenticate</RouterLink></li>
-    <li><RouterLink to="/">New Match</RouterLink></li>
+    <li>
+      <RouterLink to="/account">Account</RouterLink>
+    </li>
+    <li v-if="!session">
+      <RouterLink to="/auth">Authenticate</RouterLink>
+    </li>
+    <li>
+      <RouterLink to="/">New Match</RouterLink>
+    </li>
   </ul>
-  <RouterView />
+  <RouterView /><br>
   <button @click="supabase.auth.signOut()">Sign Out!</button>
 
 </template>

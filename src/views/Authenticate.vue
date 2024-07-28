@@ -6,7 +6,7 @@ import { useData } from '@/stores/data';
 import { storeToRefs } from 'pinia';
 import { supabase } from '@/supabase/supabase';
 import router from '@/router';
-import { handleError } from 'vue';
+import { handleError } from '../func';
 const store = useData()
 const { session } = storeToRefs(store)
 async function callback(response) {
@@ -19,7 +19,7 @@ async function callback(response) {
         supabase.auth.onAuthStateChange((_, _session) => {
             session.value = _session
         })
-        
+
     } catch (error) {
         console.error('Google sign-in error:', error.message)
     }
