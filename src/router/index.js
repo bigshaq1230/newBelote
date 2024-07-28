@@ -2,6 +2,7 @@ import { createRouter, createWebHistory } from 'vue-router'
 import HomeView from '../views/HomeView.vue'
 import Account from '@/views/Account.vue'
 import Authenticate from '@/views/Authenticate.vue'
+import Match from '@/views/Match.vue'
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
@@ -17,6 +18,11 @@ const router = createRouter({
     {
       path:'/auth',
       component:Authenticate
+    },
+    {
+      path: '/match/:id',
+      name: 'match',
+      component: Match,
     }
   ]
 })

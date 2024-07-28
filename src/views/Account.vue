@@ -52,7 +52,7 @@ const uploadAvatar = async () => {
     }
     const file = files.value[0];
     const fileExt = file.name.split('.').pop();
-    const filePath = `${player.value.id}.${fileExt}`;
+    const filePath = `${player.value.user_id}.${fileExt}`;
 
     const { error: uploadError } = await supabase
         .storage

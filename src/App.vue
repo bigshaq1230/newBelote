@@ -24,14 +24,34 @@ async function syncProperty(obj) {
     handleError(error)
   }
 }
+async function getMatches() {
+  const user_id = session.value.user.id
+
+  const { error, data} = await supabase.from('match').select().or(`p1.eq.${user_id},p2.eq.${user_id},p3.eq.${user_id},p4.eq.${user_id}`)
+  console.log("matches: ",data)
+  handleError(error)
+  let l = []
+  data.forEach(element => {
+    element.rounds = []
+    l.push(element.id)
+  })
+  matches.value = data
+  const { data:rounds, error:roundsError} = await supabase.from('round').select().in('match_id',l)
+  handleError(error)
+  matches.value.forEach(match => {
+    rounds.forEach(round => {
+      if(round.match_id === match.id) match.rounds.push(round)
+    })
+  });
+
+}
 async function syncPlayer() {
   if (Object.keys(changes.value.player).length <= 0) {
     return
   }
   player.value.user_id = session.value.user.id
-  const { error } = await supabase.from('player').upsert(player.value)
+  const { error } = await supabase.from('player').upsert(changes.value.player)
   handleError(error)
-
 }
 
 async function getplayers() {
@@ -39,18 +59,14 @@ async function getplayers() {
   handleError(error)
   players.value = data
   console.log("players from server", data)
-
 }
 
 function ResolveOwnPlayer() {
-  if (session.value) {
-    const index = players.value.findIndex((l) => l.user_id === session.value.user.id)
-    player.value = players.value[index]
-  }
-  else {
-    const index = players.value.findIndex( (l) => l.user_id === -1)
-    player.value = players.value[index]
-  }
+    const index = players.value.findIndex((l) => l.user_id === player.value.user_id)
+    if (index === -1) {
+      players.value.push(player.value)
+    }
+    else player.value = players.value[index]
 }
 
 onMounted(async () => {
@@ -72,6 +88,8 @@ onMounted(async () => {
 
 
       await getplayers()
+      ResolveOwnPlayer()
+      await getMatches()
       await resolve_avatar_url(players)
     }
     catch (error) { handleError(error) }
@@ -79,10 +97,10 @@ onMounted(async () => {
       localStorage.removeItem('changes')
     }
   }
-  ResolveOwnPlayer()
 
 })
 watch(player, () => {
+  console.log(player.value)
   localStorage.setItem('player', JSON.stringify(player.value))
 }, { deep: true })
 
