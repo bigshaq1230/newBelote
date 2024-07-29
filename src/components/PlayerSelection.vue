@@ -1,13 +1,13 @@
 <template>
-    <div @click="show = true" style="width: 100px;height: 100px;">
-        p{{ index+1 }}
+    <div @click="show = true" class="player">
+        p{{ index + 1 }}
         <img :src="p?.on_device_url" alt="" v-if="p?.on_device_url">
         <span v-else>{{ p?.first_name }}</span>
     </div>
     
     <div class="modal_backdrop" v-if="show">
         <div class="modal">
-            <div class="title">player {{ props.index }}</div>
+            <div class="title">player {{ index + 1  }}</div>
             <span class="close" @click="show = false">&times;</span>
             <div class="content">
                 <div class="player" v-for="p in players" :key="p.user_id" @click="handleClick(p)">
@@ -23,7 +23,7 @@
 import { toRefs, ref } from 'vue';
 const props = defineProps(['players', 'index']);
 const emit = defineEmits(['selected']);
-let { players } = toRefs(props);
+let { players,index } = toRefs(props);
 let show = ref(false);
 let p = ref()
 const handleClick = (player) => {
@@ -90,6 +90,8 @@ const handleClick = (player) => {
 }
 
 .player {
+    min-width: 50px;
+    min-height: 50px;
     width: 20%;
     height: 20%;
 }

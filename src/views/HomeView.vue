@@ -39,6 +39,7 @@ const store = useData();
 const { players, team_A, team_B, p1, p2, p3, p4, session, changes, matches } = storeToRefs(store);
 const list = ref(Array(4).fill().map(() => [...players.value]));
 
+let Plist = [p1,p2,p3,p4]
 watch(players, () => {
     list.value = Array(4).fill().map(() => [...players.value]);
     console.log(list.value);
@@ -46,6 +47,7 @@ watch(players, () => {
 
 const handleSelect = ({ id, index }) => {
 
+    Plist[index].value = id
     list.value = list.value.map((playerList, i) => {
         if (i !== index) {
             return playerList.filter(player => player.user_id !== id);

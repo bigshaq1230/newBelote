@@ -27,8 +27,8 @@ async function syncProperty(obj) {
 async function getMatches() {
   const user_id = session.value.user.id
 
-  const { error, data} = await supabase.from('match').select().or(`p1.eq.${user_id},p2.eq.${user_id},p3.eq.${user_id},p4.eq.${user_id}`)
-  console.log("matches: ",data)
+  const { error, data } = await supabase.from('match').select().or(`p1.eq.${user_id},p2.eq.${user_id},p3.eq.${user_id},p4.eq.${user_id}`)
+  console.log("matches: ", data)
   handleError(error)
   let l = []
   data.forEach(element => {
@@ -36,11 +36,11 @@ async function getMatches() {
     l.push(element.id)
   })
   matches.value = data
-  const { data:rounds, error:roundsError} = await supabase.from('round').select().in('match_id',l)
+  const { data: rounds, error: roundsError } = await supabase.from('round').select().in('match_id', l)
   handleError(error)
   matches.value.forEach(match => {
     rounds.forEach(round => {
-      if(round.match_id === match.id) match.rounds.push(round)
+      if (round.match_id === match.id) match.rounds.push(round)
     })
   });
 
@@ -63,12 +63,13 @@ async function getplayers() {
 }
 
 function ResolveOwnPlayer() {
-    const index = players.value.findIndex((l) => l.user_id === player.value.user_id)
-    if (index === -1) {
-      players.value.push(player.value)
-    }
-    else player.value = players.value[index]
+  const index = players.value.findIndex((l) => l.user_id === player.value.user_id)
+  if (index === -1) {
+    players.value.push(player.value)
+  }
+  else player.value = players.value[index]
 }
+
 
 onMounted(async () => {
   await supabase.auth.getSession().then(({ data }) => {
@@ -80,11 +81,14 @@ onMounted(async () => {
 
   })
   if (session.value) {
+    let state = true
     try {
 
-      const { matches } = changes.value
+      const { matches, rounds } = changes.value
 
       await syncProperty(matches)
+      setTimeout(()=> {console.log("wait 1 second")},1500)
+      await syncProperty(rounds)
       await syncPlayer()
 
 
@@ -93,8 +97,13 @@ onMounted(async () => {
       await getMatches()
       await resolve_avatar_url(players)
     }
-    catch (error) { handleError(error) }
-    finally {
+    catch (error) {
+      
+      state = false
+      handleError(error);
+    }
+    if (state === true) {
+      console.log("state is true")
       localStorage.removeItem('changes')
     }
   }
@@ -112,8 +121,15 @@ watch(changes, () => {
 watch(matches, () => {
   localStorage.setItem('matches', JSON.stringify(matches.value))
 }, { deep: true })
+watch(players, () => {
+  console.log("players: ", players.value)
+  localStorage.setItem('players', JSON.stringify(players.value))
+}, { deep: true })
 
-
+const signOut = () => {
+  supabase.auth.signOut();
+  //localStorage.clear();
+}
 </script>
 
 <template>
@@ -129,7 +145,7 @@ watch(matches, () => {
     </li>
   </ul>
   <RouterView /><br>
-  <button v-if="session"@click="supabase.auth.signOut()">Sign Out!</button>
+  <button v-if="session" @click="signOut">Sign Out!</button>
 
 </template>
 

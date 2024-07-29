@@ -36,6 +36,7 @@ async function updateInfo() {
     }
     else {
         player2.user_id = session.value.user.id
+        player.value.user_id = session.value.user.id
         await uploadAvatar()
         const { error } = await supabase.from('player').upsert(player2)
         handleError(error)
