@@ -50,6 +50,7 @@ async function syncPlayer() {
     return
   }
   player.value.user_id = session.value.user.id
+  changes.value.player.user_id = session.value.user.id
   const { error } = await supabase.from('player').upsert(changes.value.player)
   handleError(error)
 }
@@ -128,7 +129,7 @@ watch(matches, () => {
     </li>
   </ul>
   <RouterView /><br>
-  <button @click="supabase.auth.signOut()">Sign Out!</button>
+  <button v-if="session"@click="supabase.auth.signOut()">Sign Out!</button>
 
 </template>
 
