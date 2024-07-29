@@ -36,9 +36,7 @@ async function callback(response) {
         console.error('Google sign-in error:', error.message)
     }
     if (state) {
-        location.reload()
         router.replace('/')
-        
     }
 }
 </script>
