@@ -10,7 +10,6 @@ import { handleError } from '../func';
 const store = useData()
 const { session, player } = storeToRefs(store)
 async function callback(response) {
-    let state = true
     try {
         const { data, error } = await supabase.auth.signInWithIdToken({
             provider: 'google',
@@ -30,13 +29,11 @@ async function callback(response) {
             const { error } = await supabase.from('player').upsert(player)
             handleError(error)
         }
+        router.replace('/')
 
     } catch (error) {
-        state = false
         console.error('Google sign-in error:', error.message)
     }
-    if (state) {
-        router.replace('/')
-    }
+
 }
 </script>

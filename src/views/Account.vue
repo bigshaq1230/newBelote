@@ -24,6 +24,7 @@ import { useData } from '@/stores/data';
 import { storeToRefs } from 'pinia';
 import { handleError } from '../func';
 import { ref } from 'vue';
+import router from '@/router';
 const store = useData()
 const { session, player, changes } = storeToRefs(store)
 let files = ref([]);
@@ -41,6 +42,7 @@ async function updateInfo() {
         const { error } = await supabase.from('player').upsert(player2)
         handleError(error)
     }
+    router.replace('/')
 }
 function basic_handle(evt) {
     files.value = evt.target.files;
