@@ -30,6 +30,7 @@ async function callback(response) {
             handleError(error)
         }
         router.replace('/')
+        location.reload()
 
     } catch (error) {
         console.error('Google sign-in error:', error.message)
