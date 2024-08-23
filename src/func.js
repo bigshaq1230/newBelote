@@ -5,8 +5,8 @@ export function handleError(error) {
 }
 import { supabase } from "./supabase/supabase";
 export async function resolve_avatar_url(players) {
-
-    players.value.forEach(async (player) => {
+    console.log("players from resolve avatars: ",players)
+    players.value.forEach(async (player) => {   
         if (!player.avatar_url) return
 
         try {

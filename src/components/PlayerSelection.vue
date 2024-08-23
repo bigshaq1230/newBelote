@@ -2,7 +2,7 @@
 <template>
     <div @click="show = true" class="player">
         p{{ index + 1 }}
-        <img :src="p?.on_device_url" alt="" v-if="p?.on_device_url">
+        <img :src="p.on_device_url" alt="" v-if="p?.on_device_url">
         <span v-else>{{ p?.first_name }}</span>
     </div>
     
@@ -12,7 +12,7 @@
             <span class="close" @click="show = false">&times;</span>
             <div class="content">
                 <div class="player" v-for="p in players" :key="p.user_id" @click="handleClick(p)">
-                    <img :src="p.on_device_url" alt="" v-if="p.on_device_url">
+                    <img :src="p.on_device_url" alt="" v-if="p?.on_device_url">
                     <span v-else>{{ p.first_name }}</span>
                 </div>
             </div>
