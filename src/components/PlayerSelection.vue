@@ -1,3 +1,4 @@
+
 <template>
     <div @click="show = true" class="player">
         p{{ index + 1 }}
@@ -43,7 +44,7 @@ const handleClick = (player) => {
     background-color: rgba(0, 0, 0, 0.4);
 }
 
-.modal {
+/*.modal {
     position: fixed;
     background-color: white;
     z-index: 2;
@@ -57,6 +58,30 @@ const handleClick = (player) => {
     left: 50%;
     -ms-transform: translate(-50%, -50%);
     transform: translate(-50%, -50%);
+}*/
+.modal {
+    position: fixed;
+    background-color: white; /* Light mode background */
+    color: black; /* Light mode text color */
+    z-index: 2;
+    margin: auto;
+    padding: 20px;
+    width: auto;
+    height: auto;
+    border: 1px solid #888;
+    display: block;
+    top: 50%;
+    left: 50%;
+    -ms-transform: translate(-50%, -50%);
+    transform: translate(-50%, -50%);
+}
+
+@media (prefers-color-scheme: dark) {
+    .modal {
+        background-color: #121212; /* Dark mode background */
+        color: #e0e0e0; /* Dark mode text color */
+        border-color: #333;
+    }
 }
 
 .close {
