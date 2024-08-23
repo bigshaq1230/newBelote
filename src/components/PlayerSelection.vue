@@ -45,7 +45,7 @@ const handleClick = (player) => {
 
 .modal {
     position: fixed;
-    background-color: #fefefe;
+    background-color: white;
     z-index: 2;
     margin: auto;
     padding: 20px;

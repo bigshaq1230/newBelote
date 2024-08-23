@@ -24,6 +24,13 @@
         </tr>
     </table>
     <button @click="start">start match</button>
+
+    <ul>
+        <li v-for="match in matches" >
+            <RouterLink :to="`/match/${match.id}`">{{ new Date(match.id).toUTCString() }}</RouterLink>
+        </li>
+    </ul>
+
 </template>
 
 <script setup>
