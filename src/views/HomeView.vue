@@ -50,7 +50,6 @@ const list = ref(Array(4).fill().map(() => [...players.value]));
 let Plist = [p1,p2,p3,p4]
 watch(players, () => {
     list.value = Array(4).fill().map(() => [...players.value]);
-    console.log(list.value);
 });
 
 const handleSelect = ({ id, index }) => {

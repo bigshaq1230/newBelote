@@ -28,7 +28,6 @@ async function getMatches() {
   const user_id = session.value.user.id
 
   const { error, data } = await supabase.from('match').select().or(`p1.eq.${user_id},p2.eq.${user_id},p3.eq.${user_id},p4.eq.${user_id}`)
-  console.log("matches: ", data)
   handleError(error)
   let l = []
   data.forEach(element => {
@@ -59,7 +58,6 @@ async function getplayers() {
   const { error, data } = await supabase.from('player').select()
   handleError(error)
   players.value = data
-  console.log("players from server", data)
 }
 
 function ResolveOwnPlayer() {
@@ -110,7 +108,6 @@ onMounted(async () => {
 
 })
 watch(player, () => {
-  console.log(player.value)
   localStorage.setItem('player', JSON.stringify(player.value))
 }, { deep: true })
 
@@ -122,7 +119,6 @@ watch(matches, () => {
   localStorage.setItem('matches', JSON.stringify(matches.value))
 }, { deep: true })
 watch(players, () => {
-  console.log("players: ", players.value)
   localStorage.setItem('players', JSON.stringify(players.value))
 }, { deep: true })
 

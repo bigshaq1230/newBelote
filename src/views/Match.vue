@@ -39,7 +39,6 @@ if (index.value === -1) {
     console.error(`Match with id ${route.params.id} not found`);
 }
 
-console.log("rounds:", match.value?.rounds);
 
 async function add() {
     const round = {

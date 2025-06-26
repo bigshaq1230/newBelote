@@ -119,6 +119,7 @@ const handleClick = (player) => {
     min-height: 50px;
     width: 20%;
     height: 20%;
+    border: wheat 1px solid;
 }
 
 img {
