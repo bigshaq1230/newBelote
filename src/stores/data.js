@@ -4,10 +4,10 @@ import { defineStore } from 'pinia'
 export const useData = defineStore('data', () => {
   let team_A = ref("team_A")
   let team_B = ref("team_B")
-  let p1 = ref({})
-  let p2 = ref({})
-  let p3 = ref({})
-  let p4 = ref({})
+  let p1 = ref({user_id:null})
+  let p2 = ref({user_id:null})
+  let p3 = ref({user_id:null})
+  let p4 = ref({user_id:null})
   let session = ref()
   let player = ref(JSON.parse(localStorage.getItem('player')) || {
     first_name: "first_name here",

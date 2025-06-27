@@ -132,10 +132,12 @@ const handleClick = () => {
 .player.unavailable {
     background-color: rgba(128, 128, 128, 0.5);
     opacity: 0.7;
+    cursor: not-allowed;
 }
 
 .player.unavailable .player-avatar {
     filter: grayscale(80%);
+
 }
 
 .player:not(.unavailable):hover {

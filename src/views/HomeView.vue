@@ -5,10 +5,10 @@
                 <input type="text" v-model="team_A">
             </td>
             <td>
-                <PlayerSelection :players="players" :index="0" @selected="handleSelect" :current-player="Plist[0]" />
+                <PlayerSelection :players="players" :index="0" @selected="handleSelect" :current-player="p1" />
             </td>
             <td>
-                <PlayerSelection :players="players" :index="1" @selected="handleSelect" :current-player="Plist[1]" />
+                <PlayerSelection :players="players" :index="1" @selected="handleSelect" :current-player="p2" />
             </td>
         </tr>
         <tr>
@@ -16,10 +16,10 @@
                 <input type="text" v-model="team_B">
             </td>
             <td>
-                <PlayerSelection :players="players" :index="2" @selected="handleSelect" :current-player="Plist[2]" />
+                <PlayerSelection :players="players" :index="2" @selected="handleSelect" :current-player="p3" />
             </td>
             <td>
-                <PlayerSelection :players="players" :index="3" @selected="handleSelect" :current-player="Plist[3]"/>
+                <PlayerSelection :players="players" :index="3" @selected="handleSelect" :current-player="p4"/>
             </td>
         </tr>
     </table>
@@ -48,10 +48,14 @@ const { players, team_A, team_B, p1, p2, p3, p4, session, changes, matches } = s
 
 let Plist = [p1,p2,p3,p4]
 
-
+// TODO FIX THIS FUCKING PIECE OF SHIT
+// I DON'T CARE ANYMORE
 const handleSelect = ({ player, index, currentPlayer }) => {
     // Check if the player is not selected and the slot is empty
-    if (!player.selected && !Plist[index].value.user_id) {
+    console.log(index)
+    console.log(Plist[index].value.user_id)
+    console.log(player)
+    if (!player.selected &&( Plist[index].value.user_id == null)) {
         player.selected = true;
         Plist[index].value = player;
     }
