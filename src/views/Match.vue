@@ -8,12 +8,12 @@
                  {{ match.team_B }}: {{ totalB }}</td>
         </tr>
         <tr>
-            <td><Player :player="p1"/>
-                <Player :player="p2"/>
+            <td><Player :player="p1" :can_be_unavailable="false"/>
+                <Player :player="p2":can_be_unavailable="false"/>
                 </td>
                 <td>
-                <Player :player="p3"/>
-                <Player :player="p4"/>
+                <Player :player="p3" :can_be_unavailable="false"/>
+                <Player :player="p4":can_be_unavailable="false"/>
 
                 </td>
         </tr>
@@ -49,6 +49,9 @@ let match = ref(matches.value[index])
 if (index.value === -1) {
     console.error(`Match with id ${route.params.id} not found`);
 }
+console.log(index)
+console.log(match.value)
+console.log(matches.value)
 p1.value = players.value.find( (e) => e.user_id === match.value.p1)
 p2.value = players.value.find( (e) => e.user_id === match.value.p2)
 p3.value = players.value.find( (e) => e.user_id === match.value.p3)

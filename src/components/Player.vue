@@ -54,7 +54,7 @@ const playerName = computed(() =>
 );
 
 const isUnavailable = computed(() =>
-    can_be_unavailable.value && player.value.selected
+    can_be_unavailable.value && player.value?.selected
 );
 
 const playerTooltip = computed(() =>

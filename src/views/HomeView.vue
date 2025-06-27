@@ -81,10 +81,10 @@ async function start() {
     const match = {
         team_A: team_A.value,
         team_B: team_B.value,
-        p1: p1.value,
-        p2: p2.value,
-        p3: p3.value,
-        p4: p4.value,
+        p1: p1.value.user_id,
+        p2: p2.value.user_id,
+        p3: p3.value.user_id,
+        p4: p4.value.user_id,
         id: date,
     };
     const match2 = JSON.parse(JSON.stringify(match));
