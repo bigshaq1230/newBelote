@@ -1,8 +1,21 @@
 <template>
     <table v-if="index !== -1">
         <tr>
-            <td>{{match.team_A}}: {{ totalA }}</td>
-            <td> {{ match.team_B }}: {{ totalB }}</td>
+            <td>
+                {{match.team_A}}: {{ totalA }}
+            </td>
+            <td>
+                 {{ match.team_B }}: {{ totalB }}</td>
+        </tr>
+        <tr>
+            <td><Player :player="p1"/>
+                <Player :player="p2"/>
+                </td>
+                <td>
+                <Player :player="p3"/>
+                <Player :player="p4"/>
+
+                </td>
         </tr>
         <tr v-for="round in match.rounds" :key="round.id">
             <td>{{ round.scoreA }}</td>
@@ -17,27 +30,29 @@
     <div v-else>
         <p>Match not found</p>
     </div>
-    <button @click="complete" v-if="index !== -1">mark complete</button>
 </template>
 
 <script setup>
 import { useData } from '@/stores/data';
 import { supabase } from '@/supabase/supabase';
 import { storeToRefs } from 'pinia';
-import { computed, onBeforeMount, ref } from 'vue';
+import { computed, ref } from 'vue';
 import { useRoute } from 'vue-router';
-import { watch } from 'vue';
-
+import Player from '@/components/Player.vue';
 const route = useRoute();
 const scoreA = ref(0);
 const scoreB = ref(0);
 const store = useData();
-const { session, changes, matches } = storeToRefs(store);
+const { session, changes, matches,p1,p3,p2,p4,players } = storeToRefs(store);
 let index = matches.value.findIndex((l) => l.id == route.params.id)
 let match = ref(matches.value[index])
 if (index.value === -1) {
     console.error(`Match with id ${route.params.id} not found`);
 }
+p1.value = players.value.find( (e) => e.user_id === match.value.p1)
+p2.value = players.value.find( (e) => e.user_id === match.value.p2)
+p3.value = players.value.find( (e) => e.user_id === match.value.p3)
+p4.value = players.value.find( (e) => e.user_id === match.value.p4)
 
 
 async function add() {
@@ -61,10 +76,5 @@ async function add() {
 const totalA = computed(() => match.value?.rounds.reduce((sum, round) => sum + round.scoreA, 0) || 0);
 const totalB = computed(() => match.value?.rounds.reduce((sum, round) => sum + round.scoreB, 0) || 0);
 
-function complete() {
-    if (totalA.value === 0 && totalB.value === 0) {
-        return;
-    }
 
-}
 </script>

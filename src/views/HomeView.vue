@@ -5,10 +5,10 @@
                 <input type="text" v-model="team_A">
             </td>
             <td>
-                <PlayerSelection :players="list[0]" :index="0" @selected="handleSelect" />
+                <PlayerSelection :players="players" :index="0" @selected="handleSelect" :current-player="Plist[0]" />
             </td>
             <td>
-                <PlayerSelection :players="list[1]" :index="1" @selected="handleSelect" />
+                <PlayerSelection :players="players" :index="1" @selected="handleSelect" :current-player="Plist[1]" />
             </td>
         </tr>
         <tr>
@@ -16,10 +16,10 @@
                 <input type="text" v-model="team_B">
             </td>
             <td>
-                <PlayerSelection :players="list[2]" :index="2" @selected="handleSelect" />
+                <PlayerSelection :players="players" :index="2" @selected="handleSelect" :current-player="Plist[2]" />
             </td>
             <td>
-                <PlayerSelection :players="list[3]" :index="3" @selected="handleSelect" />
+                <PlayerSelection :players="players" :index="3" @selected="handleSelect" :current-player="Plist[3]"/>
             </td>
         </tr>
     </table>
@@ -45,25 +45,28 @@ import PlayerSelection from '@/components/PlayerSelection.vue';
 
 const store = useData();
 const { players, team_A, team_B, p1, p2, p3, p4, session, changes, matches } = storeToRefs(store);
-const list = ref(Array(4).fill().map(() => [...players.value]));
 
 let Plist = [p1,p2,p3,p4]
-watch(players, () => {
-    list.value = Array(4).fill().map(() => [...players.value]);
-});
 
-const handleSelect = ({ id, index }) => {
 
-    Plist[index].value = id
-    list.value = list.value.map((playerList, i) => {
-        if (i !== index) {
-            return playerList.filter(player => player.user_id !== id);
-        }
-        return playerList;
-    });
+const handleSelect = ({ player, index,currentPlayer }) => {
+    if (!player.selected) {
+        player.selected = true
+        Plist[index].value = player
+    }
+    else if (player.selected && currentPlayer.value.user_id == player.user_id) {
+        player.selected = false
+        Plist[index].value = null
+    }
 };
 
 async function start() {
+    for (let index = 0; index < Plist.length; index++) {
+        const element = Plist[index];
+        if (element.value.user_id == null) {
+            return
+        }
+    }
     const date = Date.now();
     const match = {
         team_A: team_A.value,

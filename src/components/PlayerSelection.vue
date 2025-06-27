@@ -1,20 +1,14 @@
-
 <template>
-    <div @click="show = true" class="player">
-        p{{ index + 1 }}
-        <img :src="p.on_device_url" alt="" v-if="p?.on_device_url">
-        <span v-else>{{ p?.first_name }}</span>
-    </div>
-    
+    <Player @clicked="show = true" :index="index" :player="currentPlayer" :can_be_unavailable="false"></Player>
+
     <div class="modal_backdrop" v-if="show">
         <div class="modal">
-            <div class="title">player {{ index + 1  }}</div>
             <span class="close" @click="show = false">&times;</span>
             <div class="content">
-                <div class="player" v-for="p in players" :key="p.user_id" @click="handleClick(p)">
-                    <img :src="p.on_device_url" alt="" v-if="p?.on_device_url">
-                    <span v-else>{{ p.first_name }}</span>
-                </div>
+                <Player v-for="player in players"
+                :key="player.user_id"
+                @click="handleClick(player)"
+                :player="player"> </Player>
             </div>
         </div>
     </div>
@@ -22,14 +16,27 @@
 
 <script setup>
 import { toRefs, ref } from 'vue';
-const props = defineProps(['players', 'index']);
+import Player from './Player.vue';
+const props = defineProps({
+    players: {
+        type: Array,
+        default: () => []
+    },
+    index: {
+        type: Number,
+        default: 0
+    },
+    currentPlayer: {
+        type: Object,
+        default: null
+    }
+});
 const emit = defineEmits(['selected']);
-let { players,index } = toRefs(props);
+let { players,index,currentPlayer  } = toRefs(props);
 let show = ref(false);
-let p = ref()
+
 const handleClick = (player) => {
-    p.value = player
-    emit('selected', { id:player.user_id, index: props.index });
+    emit('selected', { player:player, index: props.index,currentPlayer:currentPlayer });
     show.value = false;
 };
 </script>
@@ -43,22 +50,6 @@ const handleClick = (player) => {
     height: 100vh;
     background-color: rgba(0, 0, 0, 0.4);
 }
-
-/*.modal {
-    position: fixed;
-    background-color: white;
-    z-index: 2;
-    margin: auto;
-    padding: 20px;
-    width: auto;
-    height: auto;
-    border: 1px solid #888;
-    display: block;
-    top: 50%;
-    left: 50%;
-    -ms-transform: translate(-50%, -50%);
-    transform: translate(-50%, -50%);
-}*/
 .modal {
     position: fixed;
     background-color: white; /* Light mode background */
@@ -114,16 +105,5 @@ const handleClick = (player) => {
     gap: 20px;
 }
 
-.player {
-    min-width: 50px;
-    min-height: 50px;
-    width: 20%;
-    height: 20%;
-    border: wheat 1px solid;
-}
 
-img {
-    width: 100%;
-    height: 100%;
-}
 </style>

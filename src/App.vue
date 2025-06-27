@@ -91,12 +91,12 @@ onMounted(async () => {
 
 
       await getplayers()
+      await resolve_avatar_url(players)
       ResolveOwnPlayer()
       await getMatches()
-      await resolve_avatar_url(players)
     }
     catch (error) {
-      
+
       state = false
       handleError(error);
     }
