@@ -5,10 +5,10 @@
         <div class="modal">
             <span class="close" @click="show = false">&times;</span>
             <div class="content">
-                <Player v-for="player in players"
+                <Player v-for="player in players "  :greentick="currentPlayer?.user_id === player.user_id"
                 :key="player.user_id"
                 @click="handleClick(player)"
-                :player="player"> </Player>
+                :player="player" />
             </div>
         </div>
     </div>
@@ -36,6 +36,7 @@ let { players,index,currentPlayer  } = toRefs(props);
 let show = ref(false);
 
 const handleClick = (player) => {
+    console.log(currentPlayer.value)
     emit('selected', { player:player, index: props.index,currentPlayer:currentPlayer });
     show.value = false;
 };

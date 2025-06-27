@@ -49,14 +49,24 @@ const { players, team_A, team_B, p1, p2, p3, p4, session, changes, matches } = s
 let Plist = [p1,p2,p3,p4]
 
 
-const handleSelect = ({ player, index,currentPlayer }) => {
-    if (!player.selected) {
-        player.selected = true
-        Plist[index].value = player
+const handleSelect = ({ player, index, currentPlayer }) => {
+    // Check if the player is not selected and the slot is empty
+    if (!player.selected && !Plist[index].value.user_id) {
+        player.selected = true;
+        Plist[index].value = player;
     }
-    else if (player.selected && currentPlayer.value.user_id == player.user_id) {
-        player.selected = false
-        Plist[index].value = null
+    // Check if the player is selected and matches the current player
+    else if (player.selected && currentPlayer.value.user_id === player.user_id) {
+        player.selected = false;
+        Plist[index].value = { user_id: null };
+    }
+    // Otherwise, swap the selection
+    else {
+        if (currentPlayer.value) {
+            currentPlayer.value.selected = false;
+        }
+        player.selected = true;
+        Plist[index].value = player;
     }
 };
 
