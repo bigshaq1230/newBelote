@@ -1,3 +1,2 @@
 TODO
-Add a manifest file.
-Make it work offline
+add more offline support (avatars)
